@@ -7,48 +7,75 @@ RED="\033[0;31m"
 BLUE="\033[0;34m"
 NC="\033[0m"
 
+log() { echo -e "${BLUE}$1${NC}"; }
+step() { echo -e "${YELLOW}→ $1${NC}"; }
+success() { echo -e "${GREEN}$1${NC}"; }
+error() { echo -e "${RED}$1${NC}"; }
+
 START_TIME=$(date +%s)
 
 read -p "Project name: " PROJECT
-if [ -z "$PROJECT" ]; then
-  echo -e "${RED}Project name is required${NC}"
-  exit 1
-fi
+[ -z "$PROJECT" ] && error "Project name is required" && exit 1
 
 read -p "Domain: " DOMAIN
-if [ -z "$DOMAIN" ]; then
-  echo -e "${RED}Domain is required${NC}"
-  exit 1
-fi
+[ -z "$DOMAIN" ] && error "Domain is required" && exit 1
 
 REMOTE_PATH="/opt/clients/$PROJECT"
 
 echo ""
-echo -e "${BLUE}Deploying project:${NC} ${PROJECT}"
-echo -e "${BLUE}Domain:${NC} https://$PROJECT.$DOMAIN"
-echo -e "${BLUE}Remote path:${NC} $REMOTE_PATH"
+log "Deploying project: $PROJECT"
+log "Domain: https://$PROJECT.$DOMAIN"
+log "Remote path: $REMOTE_PATH"
 echo ""
 
-echo -e "${YELLOW}→ Creating remote directory...${NC}"
-ssh myserver "mkdir -p $REMOTE_PATH"
+step "Creating remote directory..."
+ssh myserver "mkdir -p '$REMOTE_PATH'"
 
-echo -e "${YELLOW}→ Syncing files...${NC}"
-rsync -az --delete --exclude-from='.rsyncignore' . myserver:$REMOTE_PATH/
+step "Syncing files..."
+rsync -az --delete --exclude-from='.rsyncignore' . "myserver:$REMOTE_PATH/"
 
-echo -e "${YELLOW}→ Writing .env and restarting containers...${NC}"
+step "Starting containers..."
 ssh myserver "
-printf 'PROJECT=%s\nDOMAIN=%s\n' '$PROJECT' '$DOMAIN' > $REMOTE_PATH/.env &&
-cd $REMOTE_PATH &&
-docker compose up -d --force-recreate &&
-docker compose ps
+printf 'PROJECT=%s\nDOMAIN=%s\n' '$PROJECT' '$DOMAIN' > '$REMOTE_PATH/.env' &&
+cd '$REMOTE_PATH' &&
+docker compose up -d --force-recreate
+"
+
+step "Configuring WordPress..."
+ssh myserver "
+cd '$REMOTE_PATH' &&
+
+for i in \$(seq 1 30); do
+  if docker compose run --rm cli wp core is-installed --allow-root >/dev/null 2>&1; then
+    break
+  fi
+  sleep 2
+done &&
+
+docker compose run --rm cli wp core is-installed --allow-root >/dev/null 2>&1 &&
+
+(
+  docker compose run --rm cli wp language core is-installed ru_RU --allow-root >/dev/null 2>&1 ||
+  docker compose run --rm cli wp language core install ru_RU --allow-root
+) &&
+
+docker compose run --rm cli wp site switch-language ru_RU --allow-root &&
+
+(
+  docker compose run --rm cli wp user get admin --allow-root >/dev/null 2>&1 ||
+  docker compose run --rm cli wp user create admin admin@example.com \
+    --role=administrator \
+    --user_pass=admin \
+    --allow-root
+)
 "
 
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 
 echo ""
-echo -e "${GREEN}--------------------------------------${NC}"
-echo -e "${GREEN}✅ Deploy completed successfully${NC}"
-echo -e "${GREEN}🌐 https://$PROJECT.$DOMAIN${NC}"
-echo -e "${GREEN}⏱ Duration: ${DURATION}s${NC}"
-echo -e "${GREEN}--------------------------------------${NC}"
+success "--------------------------------------"
+success "Deploy completed successfully"
+success "https://$PROJECT.$DOMAIN"
+success "Duration: ${DURATION}s"
+success "--------------------------------------"

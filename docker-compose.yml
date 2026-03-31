@@ -33,6 +33,19 @@ services:
     networks:
       - default
 
+  cli:
+    image: wordpress:cli-php8.2
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wp
+
 volumes:
   db_data:
 
