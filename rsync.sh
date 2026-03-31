@@ -1,0 +1,1 @@
+rsync -av --exclude-from='.rsyncignore' . root@IP:/opt/clients/PROJECT/
