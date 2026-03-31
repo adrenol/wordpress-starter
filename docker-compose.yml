@@ -8,8 +8,8 @@ services:
       WORDPRESS_DB_PASSWORD: wp
       WORDPRESS_DB_NAME: wp
       WORDPRESS_CONFIG_EXTRA: |
-        define('WP_HOME', 'https://${PROJECT}.profi.expert');
-        define('WP_SITEURL', 'https://${PROJECT}.profi.expert');
+        define('WP_HOME', 'https://${PROJECT}.${DOMAIN}');
+        define('WP_SITEURL', 'https://${PROJECT}.${DOMAIN}');
         if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($$_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
           $$_SERVER['HTTPS'] = 'on';
         }
