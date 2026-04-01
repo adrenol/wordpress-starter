@@ -1,7 +1,0 @@
-.git/
-.DS_Store/
-scripts/
-source/
-deploy.sh/
-pull.sh/
-.rsyncignore/

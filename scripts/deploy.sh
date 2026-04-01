@@ -22,7 +22,12 @@ step "Creating remote directory..."
 ssh myserver "mkdir -p '$REMOTE_PATH'"
 
 step "Syncing files..."
-rsync -az --delete --exclude-from="$(dirname "$0")/.rsyncignore" . "myserver:$REMOTE_PATH/"
+rsync -az \
+  --delete --delete-excluded \
+  --exclude-from=".rsyncignore" \
+  --exclude=".env" \
+  --exclude="AGENTS.md" \
+  . "myserver:$REMOTE_PATH/"
 
 step "Fixing permissions..."
 ssh myserver "

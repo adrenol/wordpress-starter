@@ -1,0 +1,10 @@
+/.DS_Store
+/.git/
+/.gitignore
+/.env
+/.rsyncignore
+
+/scripts/
+**/*.sh
+
+AGENTS.md
