@@ -18,7 +18,7 @@ echo ""
 
 step "Syncing wp-content..."
 rsync -az \
-  --exclude-from='.rsyncignore' \
+  --exclude-from="$(dirname "$0")/.rsyncignore" \
   "myserver:$REMOTE_PATH" \
   "$LOCAL_PATH"
 

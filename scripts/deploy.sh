@@ -10,10 +10,11 @@ read -p "Domain: " DOMAIN
 [ -z "$DOMAIN" ] && error "Domain is required" && exit 1
 
 REMOTE_PATH="/opt/clients/$PROJECT"
+URL="https://$PROJECT.$DOMAIN"
 
 echo ""
 log "Deploying project: $PROJECT"
-log "Domain: https://$PROJECT.$DOMAIN"
+log "Domain: $URL"
 log "Remote path: $REMOTE_PATH"
 echo ""
 
@@ -21,7 +22,14 @@ step "Creating remote directory..."
 ssh myserver "mkdir -p '$REMOTE_PATH'"
 
 step "Syncing files..."
-rsync -az --delete --exclude-from='.rsyncignore' . "myserver:$REMOTE_PATH/"
+rsync -az --delete --exclude-from="$(dirname "$0")/.rsyncignore" . "myserver:$REMOTE_PATH/"
+
+step "Fixing permissions..."
+ssh myserver "
+mkdir -p '$REMOTE_PATH/wp-content/uploads' &&
+chmod -R 775 '$REMOTE_PATH/wp-content' &&
+chown -R 33:33 '$REMOTE_PATH/wp-content'
+" || true
 
 step "Starting containers..."
 ssh myserver "
@@ -34,29 +42,30 @@ step "Configuring WordPress..."
 ssh myserver "
 cd '$REMOTE_PATH' &&
 
-for i in \$(seq 1 30); do
-  if docker compose run --rm cli wp core is-installed --allow-root >/dev/null 2>&1; then
-    break
-  fi
-  sleep 2
-done &&
+echo '[1/4] Checking WordPress installation...' &&
 
-docker compose run --rm cli wp core is-installed --allow-root >/dev/null 2>&1 &&
+if ! docker compose run --rm -T cli wp core is-installed --url='$URL' --allow-root >/dev/null 2>&1; then
+  echo '[install] WordPress is not installed, installing...' &&
+  docker compose run --rm -T cli wp core install \
+    --url='$URL' \
+    --title='$PROJECT' \
+    --admin_user='admin' \
+    --admin_password='admin' \
+    --admin_email='admin@example.com' \
+    --skip-email \
+    --allow-root
+else
+  echo '[ok] WordPress is already installed'
+fi &&
 
+echo '[2/4] Installing Russian language...' &&
 (
-  docker compose run --rm cli wp language core is-installed ru_RU --allow-root >/dev/null 2>&1 ||
-  docker compose run --rm cli wp language core install ru_RU --allow-root
+  docker compose run --rm -T cli wp language core is-installed ru_RU --url='$URL' --allow-root >/dev/null 2>&1 ||
+  docker compose run --rm -T cli wp language core install ru_RU --url='$URL' --allow-root
 ) &&
 
-docker compose run --rm cli wp site switch-language ru_RU --allow-root &&
-
-(
-  docker compose run --rm cli wp user get admin --allow-root >/dev/null 2>&1 ||
-  docker compose run --rm cli wp user create admin admin@example.com \
-    --role=administrator \
-    --user_pass=admin \
-    --allow-root
-)
+echo '[3/4] Switching language...' &&
+docker compose run --rm -T cli wp site switch-language ru_RU --url='$URL' --allow-root
 "
 
 END_TIME=$(date +%s)
@@ -65,6 +74,6 @@ DURATION=$((END_TIME - START_TIME))
 echo ""
 success "--------------------------------------"
 success "Deploy completed successfully"
-success "https://$PROJECT.$DOMAIN"
+success "$URL"
 success "Duration: ${DURATION}s"
 success "--------------------------------------"

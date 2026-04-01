@@ -1,1 +1,1 @@
-Use Gutenberg blocks when building WordPress website
+- Use Gutenberg blocks when building WordPress website
