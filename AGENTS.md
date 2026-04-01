@@ -1,1 +1,4 @@
-- Use Gutenberg blocks when building WordPress website
+## When building WordPress website
+
+- Use Gutenberg blocks
+- Use TailwindCSS

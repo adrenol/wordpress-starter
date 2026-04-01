@@ -21,11 +21,19 @@ echo ""
 step "Creating remote directory..."
 ssh myserver "mkdir -p '$REMOTE_PATH'"
 
+THEME_DIR="wp-content/themes/$PROJECT"
+
+step "Building Tailwind styles..."
+cd "$THEME_DIR" &&
+npm run build &&
+cd - >/dev/null || exit 1
+
 step "Syncing files..."
 rsync -az \
   --delete --delete-excluded \
   --exclude-from=".rsyncignore" \
   --exclude=".env" \
+  --exclude="$THEME_DIR/node_modules" \
   --exclude="AGENTS.md" \
   . "myserver:$REMOTE_PATH/"
 
@@ -63,7 +71,7 @@ else
   echo '[ok] WordPress is already installed'
 fi &&
 
-echo '[2/5] Installing Russian language...' &&
+echo '[2/5] Installing ru-RU language...' &&
 (
   docker compose run --rm -T cli wp language core is-installed ru_RU --url='$URL' --allow-root >/dev/null 2>&1 ||
   docker compose run --rm -T cli wp language core install ru_RU --url='$URL' --allow-root
