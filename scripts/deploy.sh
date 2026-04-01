@@ -42,7 +42,7 @@ step "Configuring WordPress..."
 ssh myserver "
 cd '$REMOTE_PATH' &&
 
-echo '[1/4] Checking WordPress installation...' &&
+echo '[1/5] Checking WordPress installation...' &&
 
 if ! docker compose run --rm -T cli wp core is-installed --url='$URL' --allow-root >/dev/null 2>&1; then
   echo '[install] WordPress is not installed, installing...' &&
@@ -58,14 +58,48 @@ else
   echo '[ok] WordPress is already installed'
 fi &&
 
-echo '[2/4] Installing Russian language...' &&
+echo '[2/5] Installing Russian language...' &&
 (
   docker compose run --rm -T cli wp language core is-installed ru_RU --url='$URL' --allow-root >/dev/null 2>&1 ||
   docker compose run --rm -T cli wp language core install ru_RU --url='$URL' --allow-root
 ) &&
 
-echo '[3/4] Switching language...' &&
-docker compose run --rm -T cli wp site switch-language ru_RU --url='$URL' --allow-root
+echo '[3/5] Switching language...' &&
+docker compose run --rm -T cli wp site switch-language ru_RU --url='$URL' --allow-root &&
+
+echo '[4/5] Activating custom theme if found...' &&
+THEME=\$(docker compose run --rm -T cli wp theme list --field=name --format=csv | grep -v '^twentytwenty' | head -n 1 || true) &&
+
+if [ -n \"\$THEME\" ]; then
+  docker compose run --rm -T cli wp theme activate \"\$THEME\" --url='$URL' --allow-root
+else
+  echo '[warn] No custom theme found, keeping current theme'
+fi &&
+
+echo '[5/5] Activating plugins (excluding defaults)...' &&
+
+PLUGINS=\$(docker compose run --rm -T cli wp plugin list \
+  --status=inactive \
+  --field=name \
+  | grep -vE '^(akismet|hello)$' || true) &&
+
+echo '[info] Found plugins:' &&
+if [ -n \"\$PLUGINS\" ]; then
+  for plugin in \$PLUGINS; do
+    echo ' -' \"\$plugin\"
+  done
+else
+  echo ' (none)'
+fi &&
+
+if [ -n \"\$PLUGINS\" ]; then
+  for plugin in \$PLUGINS; do
+    echo '[plugin] Activating' \"\$plugin...\"
+    docker compose run --rm -T cli wp plugin activate \"\$plugin\" --url='$URL' --allow-root || true
+  done
+else
+  echo '[warn] No plugins to activate'
+fi
 "
 
 END_TIME=$(date +%s)
