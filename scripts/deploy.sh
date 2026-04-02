@@ -9,6 +9,9 @@ read -p "Project name: " PROJECT
 read -p "Domain: " DOMAIN
 [ -z "$DOMAIN" ] && error "Domain is required" && exit 1
 
+read -p "Theme name: " THEME
+[ -z "$THEME" ] && error "Theme name is required" && exit 1
+
 REMOTE_PATH="/opt/clients/$PROJECT"
 URL="https://$PROJECT.$DOMAIN"
 
@@ -21,12 +24,20 @@ echo ""
 step "Creating remote directory..."
 ssh myserver "mkdir -p '$REMOTE_PATH'"
 
+THEME_DIR="wp-content/themes/$THEME"
+
+step "Building Tailwind styles..."
+cd "$THEME_DIR" &&
+npm run build &&
+cd - >/dev/null || exit 1
+
 step "Syncing files..."
 rsync -az \
   --delete --delete-excluded \
   --exclude-from=".rsyncignore" \
   --exclude=".env" \
-  --exclude="**/node_modules" \
+  --exclude="$THEME_DIR/node_modules/" \
+  --exclude="**/node_modules/" \
   --exclude="AGENTS.md" \
   . "myserver:$REMOTE_PATH/"
 
