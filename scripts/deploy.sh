@@ -5,16 +5,44 @@ START_TIME=$(date +%s)
 
 # ── Collect input ──────────────────────────────────────────────
 
-read -p "Project name: " PROJECT
+PROJECT=""
+DOMAIN=""
+THEME=""
+PLUGIN_ACTIVATE=""
+PLUGIN_PROVIDED=0
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    -p|--project) PROJECT="$2"; shift ;;
+    -d|--domain) DOMAIN="$2"; shift ;;
+    -t|--theme) THEME="$2"; shift ;;
+    --plugin) PLUGIN_ACTIVATE="$2"; PLUGIN_PROVIDED=1; shift ;;
+    -h|--help)
+      echo "Usage: deploy.sh [options]"
+      echo "Options:"
+      echo "  -p, --project <name>    Project name"
+      echo "  -d, --domain <domain>   Domain name"
+      echo "  -t, --theme <theme>     Theme name"
+      echo "  --plugin <plugin>       Plugin to activate"
+      exit 0
+      ;;
+    *) echo "Unknown parameter passed: $1"; exit 1 ;;
+  esac
+  shift
+done
+
+[ -z "$PROJECT" ] && read -p "Project name: " PROJECT
 [ -z "$PROJECT" ] && error "Project name is required" && exit 1
 
-read -p "Domain: " DOMAIN
+[ -z "$DOMAIN" ] && read -p "Domain: " DOMAIN
 [ -z "$DOMAIN" ] && error "Domain is required" && exit 1
 
-read -p "Theme name: " THEME
+[ -z "$THEME" ] && read -p "Theme name: " THEME
 [ -z "$THEME" ] && error "Theme name is required" && exit 1
 
-read -p "Plugin to activate (leave empty to skip): " PLUGIN_ACTIVATE
+if [ "$PLUGIN_PROVIDED" -eq 0 ]; then
+  read -p "Plugin to activate (leave empty to skip): " PLUGIN_ACTIVATE
+fi
 
 REMOTE_PATH="/opt/clients/$PROJECT"
 URL="https://$PROJECT.$DOMAIN"
