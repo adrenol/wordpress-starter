@@ -77,9 +77,22 @@ docker compose up -d --force-recreate
 # ── WordPress setup ────────────────────────────────────────────
 
 setup_wordpress() {
-  step "Configuring WordPress..."
+  step "Waiting for WordPress to be ready..."
   ssh myserver "
 cd '$REMOTE_PATH' &&
+
+for i in \$(seq 1 30); do
+  if docker exec '$PROJECT' test -f /var/www/html/wp-includes/version.php 2>/dev/null; then
+    echo '[ok] WordPress files are ready'
+    break
+  fi
+  if [ \$i -eq 30 ]; then
+    echo '[error] WordPress files not found after 60s'
+    exit 1
+  fi
+  echo \"[wait] Attempt \$i/30 — WordPress not ready yet...\"
+  sleep 2
+done &&
 
 echo '[1/5] Checking WordPress installation...' &&
 
