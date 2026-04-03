@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'wp_enqueue_scripts', 'custom_theme_enqueue_assets' );
+add_action( 'after_setup_theme', 'custom_theme_editor_styles' );
 
 /**
  * Enqueues theme styles.
@@ -31,4 +32,11 @@ function custom_theme_enqueue_assets() {
 			filemtime( $build_path )
 		);
 	}
+}
+
+/**
+ * Loads Tailwind styles in the Gutenberg editor.
+ */
+function custom_theme_editor_styles() {
+	add_editor_style( 'assets/css/site.css' );
 }

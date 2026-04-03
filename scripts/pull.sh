@@ -17,11 +17,7 @@ log "Local:  $LOCAL_PATH"
 echo ""
 
 step "Syncing wp-content..."
-rsync -az \
-  --delete-excluded \
-  --exclude-from=".rsyncignore" \
-  "myserver:$REMOTE_PATH" \
-  "$LOCAL_PATH"
+rsync -az "myserver:$REMOTE_PATH" "$LOCAL_PATH"
 
 echo ""
 success "--------------------------------------"

@@ -1,11 +1,9 @@
 <!-- wp:template-part {"slug":"header","tagName":"header"} /-->
 
 <!-- wp:group {"tagName":"main","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem"},"blockGap":"2rem"}},"className":"min-h-[60vh]"} -->
-<main class="wp-block-group min-h-[60vh]" style="padding-top:3rem;padding-bottom:3rem"><!-- wp:query-title {"type":"archive","showPrefix":false,"className":"text-4xl font-black tracking-tight text-zinc-950 md:text-5xl"} /-->
+<main class="wp-block-group min-h-[60vh]" style="padding-top:3rem;padding-bottom:3rem"><!-- wp:query-title {"type":"search","className":"text-4xl font-black tracking-tight text-zinc-950 md:text-5xl"} /-->
 
-<!-- wp:term-description {"className":"max-w-3xl text-base leading-7 text-zinc-600"} /-->
-
-<!-- wp:query {"queryId":2,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true},"layout":{"type":"constrained"}} -->
+<!-- wp:query {"queryId":3,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true},"layout":{"type":"constrained"}} -->
 <div class="wp-block-query"><!-- wp:post-template {"layout":{"type":"grid","columnCount":1}} -->
 <!-- wp:pattern {"slug":"custom/post-card"} /-->
 <!-- /wp:post-template -->
@@ -17,7 +15,7 @@
 
 <!-- wp:query-no-results -->
 <!-- wp:paragraph -->
-<p>Записи не найдены.</p>
+<p>По вашему запросу ничего не найдено.</p>
 <!-- /wp:paragraph -->
 <!-- /wp:query-no-results --></div>
 <!-- /wp:query --></main>

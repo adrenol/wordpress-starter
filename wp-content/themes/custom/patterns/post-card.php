@@ -14,5 +14,5 @@
 <!-- wp:post-terms {"term":"category"} /--></div>
 <!-- /wp:group -->
 
-<!-- wp:post-excerpt {"moreText":"Read more","className":"text-base leading-7 text-zinc-600"} /--></div>
+<!-- wp:post-excerpt {"moreText":"Читать далее","className":"text-base leading-7 text-zinc-600"} /--></div>
 <!-- /wp:group -->
