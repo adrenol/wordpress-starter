@@ -14,6 +14,8 @@ read -p "Domain: " DOMAIN
 read -p "Theme name: " THEME
 [ -z "$THEME" ] && error "Theme name is required" && exit 1
 
+read -p "Plugin to activate (leave empty to skip): " PLUGIN_ACTIVATE
+
 REMOTE_PATH="/opt/clients/$PROJECT"
 URL="https://$PROJECT.$DOMAIN"
 THEME_DIR="wp-content/themes/$THEME"
@@ -113,29 +115,13 @@ else
   echo '[warn] No custom theme found, keeping current theme'
 fi &&
 
-echo '[5/5] Activating plugins (excluding defaults)...' &&
+echo '[5/5] Activating requested plugin...' &&
 
-PLUGINS=\$(docker compose run --rm -T cli wp plugin list \
-  --status=inactive \
-  --field=name \
-  | grep -vE '^(akismet|hello)$' || true) &&
-
-echo '[info] Found plugins:' &&
-if [ -n \"\$PLUGINS\" ]; then
-  for plugin in \$PLUGINS; do
-    echo ' -' \"\$plugin\"
-  done
+if [ -n \"$PLUGIN_ACTIVATE\" ]; then
+  echo \"[plugin] Activating $PLUGIN_ACTIVATE...\" &&
+  docker compose run --rm -T cli wp plugin activate $PLUGIN_ACTIVATE --url='$URL' --allow-root || true
 else
-  echo ' (none)'
-fi &&
-
-if [ -n \"\$PLUGINS\" ]; then
-  for plugin in \$PLUGINS; do
-    echo '[plugin] Activating' \"\$plugin...\"
-    docker compose run --rm -T cli wp plugin activate \"\$plugin\" --url='$URL' --allow-root || true
-  done
-else
-  echo '[warn] No plugins to activate'
+  echo '[info] Skipped plugin activation (none specified)'
 fi
 "
 }
