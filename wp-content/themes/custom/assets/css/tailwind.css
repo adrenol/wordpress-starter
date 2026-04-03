@@ -9,19 +9,10 @@
 
   body {
     margin: 0;
-    background: #f4f4f5;
-    color: #18181b;
-    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
-
-  details summary {
-    cursor: pointer;
+    @apply block max-w-full h-auto;
   }
 
   input,
@@ -31,65 +22,17 @@
     font: inherit;
   }
 
-  .wp-site-blocks {
-    min-height: 100vh;
+  details summary {
+    cursor: pointer;
   }
+
 
   .wp-block-post-template {
-    margin: 0;
-    list-style: none;
-    padding-left: 0;
-  }
-
-  .wp-block-post-template.is-layout-grid {
-    padding-left: 0;
-  }
-
-  .wp-block-post-title,
-  .wp-block-post-excerpt,
-  .wp-block-heading,
-  .wp-block-site-title,
-  .wp-block-site-tagline,
-  .wp-block-query-title,
-  .wp-block-term-description {
-    margin-top: 0;
-  }
-
-  .wp-block-post-title a,
-  .wp-block-read-more,
-  .wp-block-site-title a,
-  .wp-block-navigation a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .wp-block-post-excerpt__excerpt,
-  .wp-block-term-description,
-  .wp-block-post-excerpt p {
-    margin: 0;
-  }
-
-  .wp-block-query-title {
-    @apply max-w-[14ch] text-4xl font-black leading-none tracking-tight text-zinc-950 md:text-5xl;
-  }
-
-  .wp-block-term-description {
-    @apply mt-4 max-w-3xl text-base leading-7 text-zinc-600;
+    @apply m-0 list-none p-0;
   }
 
   .wp-block-post-content > * + * {
-    margin-top: 1.25rem;
-  }
-
-  .wp-block-post-content h2,
-  .wp-block-post-content h3,
-  .wp-block-post-content h4 {
-    @apply font-bold tracking-tight text-zinc-950;
-  }
-
-  .wp-block-post-content p,
-  .wp-block-post-content li {
-    @apply text-base leading-7 text-zinc-600;
+    @apply mt-5;
   }
 
   .wp-block-post-content ul,
@@ -97,13 +40,30 @@
     @apply pl-5;
   }
 
-  .wp-block-post-content a {
-    @apply text-zinc-950 underline-offset-4 hover:underline;
+  .wp-block-post-content h2,
+  .wp-block-post-content h3,
+  .wp-block-post-content h4 {
+    @apply font-bold tracking-tight;
   }
 
-  @media (max-width: 781px) {
-    body {
-      padding-bottom: 88px;
-    }
+  .wp-block-post-content p,
+  .wp-block-post-content li {
+    @apply leading-7;
+  }
+
+  .wp-block-post-content a {
+    @apply underline underline-offset-4 hover:no-underline;
+  }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto max-w-6xl px-4;
+  }
+}
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
   }
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(dirname "$0")/source/utils.sh"
+source "$(dirname "$0")/utils.sh"
 
 read -p "Project name: " PROJECT
 if [ -z "$PROJECT" ]; then

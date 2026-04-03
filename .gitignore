@@ -6,6 +6,9 @@ out
 dist
 *.tgz
 
+# tailwind build artifact
+wp-content/themes/custom/assets/css/site.css
+
 # code coverage
 coverage
 *.lcov

@@ -1,7 +1,9 @@
 #!/bin/bash
-source "$(dirname "$0")/source/utils.sh"
+source "$(dirname "$0")/utils.sh"
 
 START_TIME=$(date +%s)
+
+# ── Collect input ──────────────────────────────────────────────
 
 read -p "Project name: " PROJECT
 [ -z "$PROJECT" ] && error "Project name is required" && exit 1
@@ -14,6 +16,7 @@ read -p "Theme name: " THEME
 
 REMOTE_PATH="/opt/clients/$PROJECT"
 URL="https://$PROJECT.$DOMAIN"
+THEME_DIR="wp-content/themes/$THEME"
 
 echo ""
 log "Deploying project: $PROJECT"
@@ -21,42 +24,59 @@ log "Domain: $URL"
 log "Remote path: $REMOTE_PATH"
 echo ""
 
-step "Creating remote directory..."
-ssh myserver "mkdir -p '$REMOTE_PATH'"
+# ── Build ──────────────────────────────────────────────────────
 
-THEME_DIR="wp-content/themes/$THEME"
+build_assets() {
+  step "Building Tailwind styles..."
+  cd "$THEME_DIR" &&
+  npm run build &&
+  cd - >/dev/null || exit 1
+}
 
-step "Building Tailwind styles..."
-cd "$THEME_DIR" &&
-npm run build &&
-cd - >/dev/null || exit 1
+# ── Sync ───────────────────────────────────────────────────────
 
-step "Syncing files..."
-rsync -az \
-  --delete --delete-excluded \
-  --exclude-from=".rsyncignore" \
-  --exclude=".env" \
-  --exclude="$THEME_DIR/node_modules/" \
-  --exclude="**/node_modules/" \
-  --exclude="AGENTS.md" \
-  . "myserver:$REMOTE_PATH/"
+sync_files() {
+  step "Creating remote directory..."
+  ssh myserver "mkdir -p '$REMOTE_PATH'"
 
-step "Fixing permissions..."
-ssh myserver "
+  step "Syncing files..."
+  rsync -az \
+    --delete --delete-excluded \
+    --exclude-from=".rsyncignore" \
+    --exclude=".env" \
+    --exclude="$THEME_DIR/node_modules/" \
+    --exclude="**/node_modules/" \
+    --exclude="AGENTS.md" \
+    . "myserver:$REMOTE_PATH/"
+}
+
+# ── Permissions ────────────────────────────────────────────────
+
+fix_permissions() {
+  step "Fixing permissions..."
+  ssh myserver "
 mkdir -p '$REMOTE_PATH/wp-content/uploads' &&
 chmod -R 775 '$REMOTE_PATH/wp-content' &&
 chown -R 33:33 '$REMOTE_PATH/wp-content'
 " || true
+}
 
-step "Starting containers..."
-ssh myserver "
+# ── Docker ─────────────────────────────────────────────────────
+
+start_containers() {
+  step "Starting containers..."
+  ssh myserver "
 printf 'PROJECT=%s\nDOMAIN=%s\n' '$PROJECT' '$DOMAIN' > '$REMOTE_PATH/.env' &&
 cd '$REMOTE_PATH' &&
 docker compose up -d --force-recreate
 "
+}
 
-step "Configuring WordPress..."
-ssh myserver "
+# ── WordPress setup ────────────────────────────────────────────
+
+setup_wordpress() {
+  step "Configuring WordPress..."
+  ssh myserver "
 cd '$REMOTE_PATH' &&
 
 echo '[1/5] Checking WordPress installation...' &&
@@ -118,6 +138,15 @@ else
   echo '[warn] No plugins to activate'
 fi
 "
+}
+
+# ── Run ────────────────────────────────────────────────────────
+
+build_assets
+sync_files
+fix_permissions
+start_containers
+setup_wordpress
 
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
