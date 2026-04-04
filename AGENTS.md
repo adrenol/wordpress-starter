@@ -4,3 +4,5 @@
 - Use TailwindCSS
 - Generate realistic final website content. Use neutral fictional contact data (e.g. hello@example.com, +7 (700) 123-4567)
 - You MUST let WordPress admin edit content where it is safe to do
+- Ensure the website is responsive and mobile-friendly
+- Ensure consistent spacing. Identical components (e.g. cards) must have the same padding and margin.
