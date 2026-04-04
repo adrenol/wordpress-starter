@@ -11,10 +11,11 @@ module.exports = {
       },
     },
     screens: {
-      sm: "600px",
-      md: "782px",
-      lg: "1024px",
-      xl: "1200px",
+      xs: "480px", // mobile
+      sm: "640px", // mobile landscape
+      md: "768px", // tablet
+      lg: "1024px", // laptop
+      xl: "1280px", // desktop
     },
     extend: {
       colors: {
