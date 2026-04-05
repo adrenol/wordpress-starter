@@ -6,9 +6,9 @@
  * Categories: featured
  */
 ?>
-<!-- wp:group {"align":"full","className":"bg-white","style":{"spacing":{"padding":{"top":"4rem","bottom":"4rem"}}},"layout":{"type":"default"}} -->
-<div class="wp-block-group alignfull bg-white" style="padding-top:4rem;padding-bottom:4rem"><!-- wp:group {"className":"site-container","style":{"spacing":{"blockGap":"1.25rem"}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group site-container"><!-- wp:paragraph {"align":"center","className":"text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500"} -->
+<!-- wp:group {"align":"full","className":"section-pad bg-white","style":{"spacing":{"padding":{"top":"4rem","bottom":"4rem"}}},"layout":{"type":"default"}} -->
+<div class="wp-block-group alignfull section-pad bg-white" style="padding-top:4rem;padding-bottom:4rem"><!-- wp:group {"align":"wide","style":{"spacing":{"blockGap":"1.25rem"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","className":"text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500"} -->
 <p class="has-text-align-center text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">Гибкая основа для нового сайта</p>
 <!-- /wp:paragraph -->
 

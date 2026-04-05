@@ -6,9 +6,9 @@
  * Categories: text
  */
 ?>
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"4rem"},"blockGap":"0.75rem"}},"layout":{"type":"default"}} -->
-<div class="wp-block-group alignfull" style="padding-top:4rem"><!-- wp:group {"className":"site-container","style":{"spacing":{"blockGap":"0.75rem"}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group site-container"><!-- wp:heading {"textAlign":"center","level":2,"className":"text-4xl font-black tracking-tight text-zinc-950"} -->
+<!-- wp:group {"align":"full","className":"section-pad","style":{"spacing":{"padding":{"top":"4rem"},"blockGap":"0.75rem"}},"layout":{"type":"default"}} -->
+<div class="wp-block-group alignfull section-pad" style="padding-top:4rem"><!-- wp:group {"align":"wide","style":{"spacing":{"blockGap":"0.75rem"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide"><!-- wp:heading {"textAlign":"center","level":2,"className":"text-4xl font-black tracking-tight text-zinc-950"} -->
 <h2 class="wp-block-heading has-text-align-center text-4xl font-black tracking-tight text-zinc-950">Сфокусированное вступление к разделу</h2>
 <!-- /wp:heading -->
 

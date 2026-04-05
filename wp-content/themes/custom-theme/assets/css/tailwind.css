@@ -11,6 +11,11 @@
     );
     margin-inline: auto;
   }
+
+  /* Safe horizontal padding for full-width content sections. */
+  .section-pad {
+    padding-inline: var(--wp--preset--spacing--md);
+  }
 }
 
 .wp-site-blocks > * {
