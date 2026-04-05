@@ -19,7 +19,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        ...getColorsFromThemeJson(),
+        theme: getColorsFromThemeJson(),
       },
       fontFamily: {
         sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],

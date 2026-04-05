@@ -1,7 +1,11 @@
 <!-- wp:template-part {"slug":"header","tagName":"header"} /-->
 
 <!-- wp:group {"tagName":"main","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem"},"blockGap":"2rem"}},"className":"min-h-[60vh]"} -->
-<main class="wp-block-group min-h-[60vh]" style="padding-top:3rem;padding-bottom:3rem"><!-- wp:query-title {"type":"archive","showPrefix":false,"className":"text-4xl font-black tracking-tight text-zinc-950 md:text-5xl"} /-->
+<main class="wp-block-group min-h-[60vh]" style="padding-top:3rem;padding-bottom:3rem"><!-- wp:query-title {"showPrefix":false,"className":"text-4xl font-black tracking-tight text-zinc-950 md:text-5xl"} /-->
+
+<!-- wp:paragraph {"className":"max-w-3xl text-base leading-7 text-zinc-600"} -->
+<p class="max-w-3xl text-base leading-7 text-zinc-600">Здесь выводятся последние материалы, результаты поиска и архивные записи в чистом списочном формате, который подходит для разных сценариев сайта.</p>
+<!-- /wp:paragraph -->
 
 <!-- wp:query {"queryId":0,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true},"layout":{"type":"constrained"}} -->
 <div class="wp-block-query"><!-- wp:post-template {"layout":{"type":"grid","columnCount":1}} -->

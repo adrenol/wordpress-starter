@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Shared container for full-width template sections. */
+  .site-container {
+    width: min(
+      calc(100% - (2 * var(--wp--preset--spacing--md))),
+      var(--wp--style--global--wide-size)
+    );
+    margin-inline: auto;
+  }
+}
+
 .wp-site-blocks > * {
   margin-block-start: 0 !important;
   margin-block-end: 0 !important;
