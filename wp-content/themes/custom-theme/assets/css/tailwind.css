@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.wp-site-blocks > *,
-.editor-styles-wrapper .is-root-container > * {
+.wp-site-blocks > * {
   margin-block-start: 0 !important;
   margin-block-end: 0 !important;
 }
